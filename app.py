@@ -6,9 +6,29 @@ from functions import display_logo, display_textbox, extract_images, display_ico
 
 page_contents = []
 
+all_images = []
+img_idx = [0]
+
+
+
 def copy_text(content):
     root.clipboard_clear()
     root.clipboard_append(content[-1])
+
+def save_all(images):
+    counter = 1 
+    for i in images :
+        if i.mode != "RGB":
+            i = i.convert("RGB")
+
+        i.save("img" + ".png", format="png")
+        counter += 1 
+
+def save_image(i):
+    if i.mode != "RGB":
+        i = i.convert("RGB")
+    i.save("img.png", format="png")
+
 
 root = Tk()
 root.geometry('+%d+%d'%(350,10)) #place GUI at x=350, y=10
@@ -33,7 +53,11 @@ def open_file():
         page_contents.append(page_content)
 
         images = extract_images(page)
-        img = images[0]
+
+        for i in images:
+            all_images.append(i)
+
+        img = images[img_idx[-1]]
 
       
         display_images(img)
@@ -60,8 +84,8 @@ def open_file():
         header.grid(columnspan=3, rowspan=1, row=3)
 
         copyText_btn = Button(root, text="copy text", command=lambda:copy_text(page_contents),font=("shanti", 10), height=1, width=15)
-        saveAll_btn = Button(root, text="save all images", font=("shanti", 10), height=1, width=15)
-        save_btn = Button(root, text="save image", font=("shanti", 10), height=1, width=15)
+        saveAll_btn = Button(root, text="save all images", command=lambda:save_all(all_images), font=("shanti", 10), height=1, width=15)
+        save_btn = Button(root, text="save image", command=lambda:save_image(all_images[img_idx[-1]]), font=("shanti", 10), height=1, width=15)
 
         copyText_btn.grid(row=3, column=0)
         saveAll_btn.grid(row=3, column=1)
